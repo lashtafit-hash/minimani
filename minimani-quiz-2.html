@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест: Найди свой мини-продукт — Гузель Усманова</title>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #0d0b0a;
+    --card:    #1a1614;
+    --yellow:  #F5A623;
+    --yellow2: #FFB940;
+    --white:   #FFFFFF;
+    --grey:    #B0A89E;
+    --border:  rgba(245,166,35,0.18);
+    --border2: rgba(245,166,35,0.4);
+    --rad:     6px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Montserrat',sans-serif;
+    background:var(--bg);
+    color:var(--white);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  body::after {
+    content:'';
+    position:fixed;
+    bottom:-150px; right:-150px;
+    width:480px; height:480px;
+    background:radial-gradient(circle, rgba(160,60,10,0.2) 0%, transparent 65%);
+    pointer-events:none; z-index:0;
+  }
+  .container { max-width:640px; margin:0 auto; padding:0 20px 60px; position:relative; z-index:1; }
+
+  /* HEADER */
+  .header { padding:48px 0 36px; text-align:center; animation:fadeUp 0.7s ease both; }
+  .handle { font-size:11px; font-weight:700; letter-spacing:3px; color:var(--grey); text-transform:uppercase; margin-bottom:20px; }
+  .header h1 { font-family:'Russo One',sans-serif; font-size:clamp(20px,5.5vw,32px); line-height:1.2; color:var(--yellow); text-transform:uppercase; margin-bottom:14px; letter-spacing:0.5px; }
+  .header-sub { font-size:14px; color:var(--grey); line-height:1.7; max-width:460px; margin:0 auto 28px; }
+  .stats { display:flex; justify-content:center; border:1px solid var(--border); border-radius:var(--rad); overflow:hidden; max-width:340px; margin:0 auto; }
+  .stat { flex:1; padding:14px 10px; text-align:center; border-right:1px solid var(--border); }
+  .stat:last-child { border-right:none; }
+  .stat-n { display:block; font-family:'Russo One',sans-serif; font-size:20px; color:var(--yellow); }
+  .stat-l { display:block; font-size:10px; color:var(--grey); text-transform:uppercase; letter-spacing:1.5px; margin-top:2px; }
+
+  /* CARD BASE */
+  .card {
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--rad);
+    padding:32px 28px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--yellow); opacity:0.55; }
+
+  /* START */
+  .start-card { text-align:center; padding:48px 32px; }
+  .start-card::before { opacity:1; }
+  .start-title { font-family:'Russo One',sans-serif; font-size:17px; color:var(--white); text-transform:uppercase; margin-bottom:12px; letter-spacing:0.5px; }
+  .start-desc { font-size:14px; color:var(--grey); line-height:1.7; margin-bottom:32px; }
+
+  /* PROGRESS */
+  .progress-wrap { margin-bottom:20px; animation:fadeUp 0.5s ease both; }
+  .progress-top { display:flex; justify-content:space-between; margin-bottom:8px; }
+  .progress-label { font-size:10px; font-weight:800; color:var(--grey); text-transform:uppercase; letter-spacing:1.5px; }
+  .progress-pct { font-family:'Russo One',sans-serif; font-size:12px; color:var(--yellow); }
+  .progress-bar { height:2px; background:rgba(255,255,255,0.07); border-radius:99px; overflow:hidden; }
+  .progress-fill { height:100%; background:var(--yellow); border-radius:99px; transition:width 0.4s cubic-bezier(0.4,0,0.2,1); box-shadow:0 0 6px rgba(245,166,35,0.5); }
+
+  /* QUESTION */
+  .q-wrap { margin-bottom:14px; animation:fadeUp 0.4s ease both; }
+  .q-num { font-size:10px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--yellow); margin-bottom:10px; opacity:0.75; }
+  .q-text { font-family:'Russo One',sans-serif; font-size:clamp(15px,3.5vw,19px); color:var(--white); text-transform:uppercase; line-height:1.35; margin-bottom:22px; letter-spacing:0.3px; }
+  .options { display:flex; flex-direction:column; gap:7px; }
+  .option { display:flex; align-items:flex-start; gap:12px; padding:13px 15px; border:1px solid rgba(255,255,255,0.07); border-radius:var(--rad); cursor:pointer; transition:all 0.2s ease; background:rgba(255,255,255,0.02); user-select:none; }
+  .option:hover { border-color:rgba(245,166,35,0.35); background:rgba(245,166,35,0.04); }
+  .option.selected { border-color:var(--yellow); background:rgba(245,166,35,0.08); }
+  .opt-box { width:17px; height:17px; border:1.5px solid rgba(255,255,255,0.2); border-radius:2px; flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+  .option.selected .opt-box { background:var(--yellow); border-color:var(--yellow); }
+  .option.selected .opt-box::after { content:''; width:4px; height:8px; border:2px solid #0d0b0a; border-top:none; border-left:none; transform:rotate(45deg) translateY(-1px); display:block; }
+  .opt-text { font-size:13px; line-height:1.55; color:var(--grey); font-weight:500; transition:color 0.2s; }
+  .option.selected .opt-text, .option:hover .opt-text { color:var(--white); }
+
+  /* BUTTONS */
+  .btn-row { display:flex; gap:10px; animation:fadeUp 0.5s 0.1s ease both; }
+  .btn { padding:14px 22px; border-radius:var(--rad); border:none; cursor:pointer; font-family:'Montserrat',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; transition:all 0.2s ease; }
+  .btn-primary { flex:1; background:var(--yellow); color:#0d0b0a; }
+  .btn-primary:hover:not(:disabled) { background:var(--yellow2); transform:translateY(-1px); }
+  .btn-primary:disabled { opacity:0.3; cursor:not-allowed; }
+  .btn-back { background:rgba(255,255,255,0.04); color:var(--grey); border:1px solid rgba(255,255,255,0.1); flex:0 0 auto; font-size:16px; letter-spacing:0; padding:14px 18px; }
+  .btn-back:hover { background:rgba(255,255,255,0.09); color:var(--white); }
+
+  /* RESULT HEADER */
+  .res-hdr { margin-bottom:14px; animation:fadeUp 0.5s ease both; }
+  .res-tag { font-size:10px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--yellow); margin-bottom:12px; opacity:0.75; }
+  .res-title { font-family:'Russo One',sans-serif; font-size:clamp(17px,4vw,22px); color:var(--yellow); text-transform:uppercase; line-height:1.25; margin-bottom:10px; letter-spacing:0.3px; }
+  .res-sub { font-size:13px; color:var(--grey); line-height:1.7; }
+
+  /* FORMATS */
+  .formats { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+  .fmt { animation:fadeUp 0.5s ease both; }
+  .fmt:nth-child(2) { animation-delay:0.08s; }
+  .fmt:nth-child(3) { animation-delay:0.16s; }
+  .fmt-top { display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+  .fmt-n { font-family:'Russo One',sans-serif; font-size:12px; color:var(--yellow); background:rgba(245,166,35,0.1); border:1px solid rgba(245,166,35,0.22); width:26px; height:26px; border-radius:2px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .fmt-name { font-family:'Russo One',sans-serif; font-size:12px; color:var(--yellow); text-transform:uppercase; letter-spacing:0.5px; }
+  .fmt-desc { font-size:13px; color:var(--grey); line-height:1.6; margin-bottom:9px; }
+  .fmt-ex { list-style:none; margin-bottom:12px; border-left:2px solid rgba(245,166,35,0.28); padding-left:11px; }
+  .fmt-ex li { font-size:12px; color:#8a8078; padding:3px 0; line-height:1.5; }
+  .fmt-bot { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:7px; padding-top:11px; border-top:1px solid rgba(255,255,255,0.05); }
+  .fmt-price { font-size:12px; font-weight:700; color:var(--grey); letter-spacing:0.5px; }
+  .fmt-income { font-size:12px; font-weight:800; color:var(--yellow); font-family:'Russo One',sans-serif; }
+
+  /* CTA */
+  .cta { animation:fadeUp 0.5s 0.25s ease both; }
+  .cta::before { opacity:1; background:linear-gradient(90deg, var(--yellow), #ff8c00, var(--yellow)); height:3px; }
+  .cta-label { font-size:10px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--yellow); margin-bottom:12px; opacity:0.75; }
+  .cta-title { font-family:'Russo One',sans-serif; font-size:clamp(17px,4vw,22px); color:var(--white); text-transform:uppercase; line-height:1.25; margin-bottom:18px; letter-spacing:0.3px; }
+  .cta-title span { color:var(--yellow); }
+  .cta-list { list-style:none; margin-bottom:20px; }
+  .cta-list li { font-size:13px; color:var(--grey); padding:6px 0 6px 18px; position:relative; line-height:1.55; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .cta-list li:last-child { border-bottom:none; }
+  .cta-list li::before { content:''; position:absolute; left:0; top:13px; width:7px; height:2px; background:var(--yellow); }
+  .price-row { display:flex; align-items:baseline; gap:12px; margin-bottom:18px; }
+  .price-new { font-family:'Russo One',sans-serif; font-size:30px; color:var(--yellow); }
+  .price-old { font-size:15px; color:#504840; text-decoration:line-through; }
+  .price-badge { font-size:11px; font-weight:800; color:#0d0b0a; background:var(--yellow); padding:3px 7px; border-radius:2px; letter-spacing:0.5px; }
+  .spots { display:flex; align-items:center; gap:7px; margin-bottom:18px; font-size:11px; font-weight:800; color:#c04a2a; text-transform:uppercase; letter-spacing:1.5px; }
+  .spots-dot { width:6px; height:6px; background:#c04a2a; border-radius:50%; animation:blink 1.4s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+  .btn-cta { display:block; width:100%; padding:17px 22px; background:var(--yellow); color:#0d0b0a; border:none; border-radius:var(--rad); font-family:'Russo One',sans-serif; font-size:13px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.2s ease; text-decoration:none; text-align:center; margin-bottom:12px; }
+  .btn-cta:hover { background:var(--yellow2); transform:translateY(-2px); box-shadow:0 8px 24px rgba(245,166,35,0.22); }
+  .cta-note { font-size:12px; color:#4a4038; text-align:center; line-height:1.6; }
+  .cta-note strong { color:var(--grey); }
+
+  .reset-wrap { text-align:center; margin-top:18px; animation:fadeUp 0.5s 0.35s ease both; }
+  .btn-reset { background:none; border:1px solid rgba(255,255,255,0.09); color:var(--grey); font-family:'Montserrat',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:10px 18px; border-radius:var(--rad); cursor:pointer; transition:all 0.2s; }
+  .btn-reset:hover { border-color:rgba(255,255,255,0.22); color:var(--white); }
+
+  .footer { text-align:center; padding-top:28px; font-size:10px; color:#2e2a26; letter-spacing:1.5px; text-transform:uppercase; }
+
+  .screen { display:none; }
+  .screen.active { display:block; animation:fadeUp 0.4s ease both; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  @media(max-width:480px){
+    .card,.start-card{ padding:22px 18px; }
+    .btn-row{ flex-direction:column; }
+    .btn-back{ flex:1; text-align:center; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- START -->
+  <div class="screen active" id="screen-start">
+    <div class="header">
+      <div class="handle">@guzellusmanova</div>
+      <h1>Найди свой идеальный мини-продукт и зарабатывай 100–300к в месяц</h1>
+      <p class="header-sub">8 вопросов — и ты узнаешь, какой формат подходит именно тебе, с конкретными темами и цифрами дохода</p>
+      <div class="stats">
+        <div class="stat"><span class="stat-n">8</span><span class="stat-l">вопросов</span></div>
+        <div class="stat"><span class="stat-n">3 мин</span><span class="stat-l">времени</span></div>
+        <div class="stat"><span class="stat-n">11</span><span class="stat-l">ниш</span></div>
+      </div>
+    </div>
+    <div class="card start-card">
+      <div class="start-title">Готова узнать свой формат?</div>
+      <p class="start-desc">Тест покажет 3 конкретных мини-продукта для твоей ниши — с темами, ценами и цифрами дохода</p>
+      <button class="btn btn-primary" onclick="startQuiz()" style="width:100%;max-width:300px;">Начать тест</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div style="height:32px"></div>
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span class="progress-label" id="progress-label">Вопрос 1 из 8</span>
+        <span class="progress-pct" id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="card q-wrap" id="q-card">
+      <div class="q-num" id="q-num">Вопрос 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="q-options"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" id="btn-back" onclick="prevQ()">←</button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextQ()" disabled>Далее</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screen-result">
+    <div style="height:32px"></div>
+    <div class="card res-hdr">
+      <div class="res-tag">Ваш результат</div>
+      <div class="res-title" id="res-title"></div>
+      <div class="res-sub" id="res-sub"></div>
+    </div>
+    <div class="formats" id="res-formats"></div>
+    <div class="card cta">
+      <div class="cta-label">Только для участников теста</div>
+      <div class="cta-title">Практикум <span>«Минимани»</span> — запусти мини-продукт за 10 дней</div>
+      <ul class="cta-list">
+        <li>День 1–3 — создашь мини-продукт с нуля (шаблоны, чек-листы, проверка идей)</li>
+        <li>День 4–5 — соберёшь воронку без сайтов и ботов</li>
+        <li>День 6–10 — запустишь продажи: прогрев + 15 сценариев рилсов</li>
+        <li>Бонус-урок в подарок всем участникам теста</li>
+      </ul>
+      <div class="spots"><span class="spots-dot"></span>Осталось 15 мест</div>
+      <div class="price-row">
+        <span class="price-new">5 600 р.</span>
+        <span class="price-old">7 000 р.</span>
+        <span class="price-badge">-20%</span>
+      </div>
+      <a href="https://taplink.cc/guzellusmanova/p/1114fef/" target="_blank" class="btn-cta">Хочу в практикум со скидкой 20%</a>
+      <div class="cta-note">Напиши слово <strong>«МИНИ»</strong> в личные сообщения — получи ссылку и бонус-урок</div>
+    </div>
+    <div class="reset-wrap"><button class="btn-reset" onclick="resetQuiz()">Пройти тест заново</button></div>
+  </div>
+
+  <div class="footer">@guzellusmanova · Практикум Минимани</div>
+</div>
+
+<script>
+const Qs=[
+  {id:1,text:"Кто вы по профессии / сфере?",opts:[
+    {t:"Бьюти-мастер (маникюр, брови, волосы, визаж, косметолог)",v:"beauty"},
+    {t:"Фитнес-тренер / нутрициолог / танцы",v:"fitness"},
+    {t:"Психолог / коуч / терапевт",v:"psych"},
+    {t:"SMM-специалист / рилсмейкер / маркетолог",v:"smm"},
+    {t:"Дизайнер / иллюстратор / creative",v:"design"},
+    {t:"Репетитор / преподаватель / эксперт по детскому развитию",v:"tutor"},
+    {t:"Hand-made мастер / творчество / ремесло",v:"handmade"},
+    {t:"Специалист по здоровью / врач / массажист / остеопат",v:"health"},
+    {t:"Предприниматель / бизнес-коуч / консультант",v:"biz"},
+    {t:"Эзотерик / таролог / астролог / нумеролог",v:"esoteric"},
+    {t:"Другое (универсальные форматы)",v:"other"}
+  ]},
+  {id:2,text:"Ваш опыт в вашей сфере?",opts:[
+    {t:"Начинающий — меньше полугода",v:"beginner"},
+    {t:"Уверенный новичок — 6–12 месяцев",v:"novice"},
+    {t:"Опытный — 1–3 года",v:"experienced"},
+    {t:"Эксперт — более 3 лет, много кейсов",v:"expert"}
+  ]},
+  {id:3,text:"Как обстоят дела с блогом / соцсетями?",opts:[
+    {t:"У меня нет блога, только личный профиль",v:"no_blog"},
+    {t:"Блог есть, но веду хаотично, одно видео в месяц",v:"chaos"},
+    {t:"Регулярно выкладываю (1–3 поста/рилса в неделю)",v:"regular"},
+    {t:"Активный блог, есть аудитория 500+, снимаю часто",v:"active"}
+  ]},
+  {id:4,text:"Какую главную цель вы ставите перед мини-продуктом?",opts:[
+    {t:"Быстрый старт и заработать от 50 000 р. с нуля",v:"fast_start"},
+    {t:"Стабильный пассивный доход 100–300 тысяч рублей",v:"passive"},
+    {t:"Прогреть аудиторию на дорогой продукт — мини-продукт как тест-драйв",v:"warm_up"},
+    {t:"Расширить линейку, выйти на масштаб, меньше работать руками",v:"scale"}
+  ]},
+  {id:5,text:"Какая у вас сейчас ситуация с доходами и продажами?",opts:[
+    {t:"Уперлась в потолок: клиентов много, больше брать не могу",v:"ceiling"},
+    {t:"Дорогие продукты стали продаваться хуже — люди не тянут высокий чек",v:"price_fall"},
+    {t:"Продаж почти нет, блог не приносит заявки, не знаю с чего начать",v:"no_sales"},
+    {t:"Доход есть, но хочу системности и пассивного дохода",v:"wants_system"}
+  ]},
+  {id:6,text:"Что вам лично больше нравится делать?",opts:[
+    {t:"Только видео (эфиры, уроки)",v:"video"},
+    {t:"Тексты / PDF / гайды",v:"text"},
+    {t:"Онлайн-эфиры / прямой контакт",v:"live"},
+    {t:"Марафоны / интенсивы / практикумы",v:"marathon"},
+    {t:"Всё равно, главное чтобы покупали",v:"any"}
+  ]},
+  {id:7,text:"Сколько клиент готов заплатить за решение своей проблемы?",opts:[
+    {t:"До 1 000 р. (быстрый ответ, чек-лист)",v:"up_1k"},
+    {t:"1 000–3 000 р. (марафон, видеоурок)",v:"1_3k"},
+    {t:"3 000–7 000 р. (практикум с обратной связью)",v:"3_7k"},
+    {t:"7 000–15 000 р. (запись курса)",v:"7_15k"}
+  ]},
+  {id:8,text:"Что вы хотите получить от мини-продукта в первую очередь?",opts:[
+    {t:"Быстрые деньги — прямо сейчас",v:"quick_money"},
+    {t:"Лояльных клиентов на подписке / в базе",v:"loyal"},
+    {t:"Заявки на дорогие услуги (личная работа)",v:"leads"},
+    {t:"Узнаваемость и отстройку от конкурентов",v:"brand"}
+  ]}
+];
+
+let ans={},cur=0;
+
+function startQuiz(){
+  document.getElementById('screen-start').classList.remove('active');
+  document.getElementById('screen-quiz').classList.add('active');
+  render();
+}
+function render(){
+  const q=Qs[cur];
+  const pct=Math.round((cur/Qs.length)*100);
+  document.getElementById('progress-label').textContent=`Вопрос ${cur+1} из ${Qs.length}`;
+  document.getElementById('progress-pct').textContent=pct+'%';
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('q-num').textContent=`Вопрос ${cur+1}`;
+  document.getElementById('q-text').textContent=q.text;
+  const el=document.getElementById('q-options');
+  el.innerHTML='';
+  q.opts.forEach(o=>{
+    const d=document.createElement('div');
+    d.className='option'+(ans[q.id]===o.v?' selected':'');
+    d.innerHTML=`<div class="opt-box"></div><div class="opt-text">${o.t}</div>`;
+    d.onclick=()=>{ans[q.id]=o.v;render();};
+    el.appendChild(d);
+  });
+  document.getElementById('btn-next').disabled=!ans[q.id];
+  document.getElementById('btn-back').style.display=cur===0?'none':'';
+  document.getElementById('btn-next').textContent=cur===Qs.length-1?'Узнать результат':'Далее';
+  const c=document.getElementById('q-card');
+  c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp 0.35s ease both';
+}
+function nextQ(){
+  if(!ans[Qs[cur].id])return;
+  if(cur<Qs.length-1){cur++;render();}
+  else showResult();
+}
+function prevQ(){if(cur>0){cur--;render();}}
+function resetQuiz(){
+  ans={};cur=0;
+  document.getElementById('screen-result').classList.remove('active');
+  document.getElementById('screen-start').classList.add('active');
+  window.scrollTo({top:0});
+}
+
+function getScenario(){
+  const blog=ans[3],exp=ans[2],goal=ans[4],sit=ans[5],fmt=ans[6];
+  const noBlog=blog==='no_blog'||blog==='chaos';
+  const active=blog==='regular'||blog==='active';
+  const expert=exp==='experienced'||exp==='expert';
+  const scale=goal==='warm_up'||goal==='scale';
+  if(fmt==='text'&&noBlog)return'A';
+  if(fmt==='video'&&(active||goal==='fast_start'||goal==='passive'))return'B';
+  if(expert&&(scale||sit==='ceiling'))return'C';
+  if(fmt==='live'||fmt==='marathon'||fmt==='any')return'D';
+  if(active)return'B';
+  return'B';
+}
+
+const R={
+  beauty:{
+    A:{title:"Твой формат — тексты и PDF без видео",sub:"Ты не хочешь снимать видео — и это отлично! Вот 3 продукта, которые можно сделать за вечер и сразу продавать.",fmts:[
+      {n:"1",name:"PDF-гайд / шпаргалка",desc:"Один файл с готовой инструкцией. Человек скачивает и сразу применяет.",ex:["Сколько можно зарабатывать на маникюре: расчёт с нуля","Чек-лист покупки оборудования для старта в маникюре","Топ-20 материалов, на которых не стоит экономить"],price:"490–1 500 р.",income:"50 продаж × 990 р. = 49 500 р."},
+      {n:"2",name:"Шаблоны (скрипты, тексты)",desc:"Готовые тексты и схемы, которые можно скопировать прямо сейчас.",ex:["Скрипты ответов клиентам в Директ — 10 шаблонов","Тексты для сторис на 5 дней для прогрева блога","Шаблон анкеты для записи на услуги"],price:"500–2 000 р.",income:"30 продаж × 1 000 р. = 30 000 р."},
+      {n:"3",name:"Мини-курс в текстовом формате",desc:"3–5 текстовых уроков + PDF-задания. Без видео.",ex:["3 урока: как привлекать клиентов через Stories без видео","4 урока по повышению чека: готовые офферы","Как работать с возражениями: текстовая база из 20 ответов"],price:"1 000–3 000 р.",income:"20 участников × 2 000 р. = 40 000 р."}
+    ]},
+    B:{title:"Твой формат — видео для пассивного дохода",sub:"Ты готова снимать видео и хочешь получать деньги без постоянного участия. Вот 3 формата, которые продаются даже ночью.",fmts:[
+      {n:"1",name:"Видеоурок",desc:"Одно видео + PDF-шпаргалка. Человек смотрит и делает.",ex:["Макияж глаз на каждый день: 3 варианта за 10 минут","Объёмная укладка без Дайсона: 3 способа для тонких волос","Сколько можно зарабатывать на маникюре: видео-расчёт"],price:"490–2 000 р.",income:"30 продаж × 1 000 р. = 30 000 р./мес."},
+      {n:"2",name:"Мини-курс (без обратной связи)",desc:"3–5 коротких видеоуроков. Без проверки, полный пассив.",ex:["3 урока идеального маникюра: опил, покрытие, дизайн","Быстрый макияж для себя: 4 видео за 10 минут","Пудровые брови — старт для новичков"],price:"2 000–7 000 р.",income:"15 участников × 5 000 р. = 75 000 р."},
+      {n:"3",name:"Марафон в записи",desc:"Готовые видео на 7–14 дней, без вашего участия.",ex:["7 дней идеального маникюра — видео каждый день","14-дневный марафон по уходу за волосами","10 дней к идеальному макияжу глаз"],price:"1 000–3 000 р.",income:"50 участников × 2 000 р. = 100 000 р."}
+    ]},
+    C:{title:"Твой формат — живые форматы с обратной связью",sub:"Ты уже опытный мастер и готова масштабироваться. Живые форматы с разбором приведут к дорогому продукту.",fmts:[
+      {n:"1",name:"Практикум с обратной связью",desc:"Групповая работа 7–15 дней. Ты разбираешь работы участников.",ex:["Педикюр без боли и натоптышей: разбор каждого шага","Как стартовать в профессии мастера маникюра с нуля","Как забить запись: 5 техник прогрева + скрипты"],price:"3 000–10 000 р.",income:"7 человек × 5 000 р. = 35 000 р. за 2 недели"},
+      {n:"2",name:"Интенсив с онлайн-созвонами",desc:"Короткий интенсив 5–7 дней с живыми созвонами и разбором.",ex:["5 дней: создаём топовый Instagram-профиль для мастера","Интенсив по поднятию чека до 10 000 р. за услугу","7 дней: внедряем юнит-экономику в свой салон"],price:"5 000–15 000 р.",income:"6 человек × 10 000 р. = 60 000 р."},
+      {n:"3",name:"Мини-курс с обратной связью",desc:"3–5 уроков с проверкой заданий.",ex:["5 уроков: как системно набирать клиентов","Автоворонка для бьюти-бизнеса: 4 шага с разбором","Скрипты продаж дорогих услуг: 3 урока с обратной связью"],price:"5 000–15 000 р.",income:"5 участников × 10 000 р. = 50 000 р."}
+    ]},
+    D:{title:"Твой формат — эфиры и аудио без монтажа",sub:"Ты любишь общаться вживую, но не хочешь тратить время на монтаж. Вот форматы на основе эфиров и аудио.",fmts:[
+      {n:"1",name:"Вебинар в записи",desc:"Один длинный эфир с презентацией. В конце — продажа следующего шага.",ex:["Как поднять цены и не потерять клиентов","5 фишек для маникюра, которые экономят час работы","Психология записи клиента: как перестать сидеть без брони"],price:"1 000–3 000 р.",income:"20 продаж × 2 000 р. = 40 000 р."},
+      {n:"2",name:"Аудио-курс (подкаст-уроки)",desc:"Ты наговариваешь 5–10 аудио-уроков по 15–30 минут. Без видео.",ex:["5 аудио-уроков: психология клиента в бьюти","Как найти свою нишу в бьюти-индустрии","Секреты успешного маникюрного блога (аудио-уроки)"],price:"1 000–4 000 р.",income:"30 продаж × 2 000 р. = 60 000 р."},
+      {n:"3",name:"Мини-курс (текст + аудио)",desc:"Комбинация текстовых уроков и аудио-пояснений.",ex:["3 урока: как работать с конфликтными клиентами","Личный бренд бьюти-мастера без видео: 4 шага","Как создать продуктовую линейку по уходу за ногтями"],price:"2 000–5 000 р.",income:"15 участников × 3 500 р. = 52 500 р."}
+    ]}
+  },
+  fitness:{
+    A:{title:"Твой формат — тексты и PDF для быстрого старта",sub:"Без видео, без монтажа — упакуй свои знания в текст и продавай.",fmts:[
+      {n:"1",name:"PDF-план питания / программа",desc:"Готовый план на 7–14 дней с расчётом БЖУ.",ex:["Меню на 1 500 ккал для занятых на неделю","ПП без голодовки: список продуктов и рецепты","Чек-лист питания до и после тренировки"],price:"300–1 200 р.",income:"100 продаж × 700 р. = 70 000 р."},
+      {n:"2",name:"Гайд по упражнениям (PDF с картинками)",desc:"Схемы, иллюстрации, программа тренировок.",ex:["5 упражнений для живота и боков дома: схема","Программа тренировок на месяц без зала","Чек-лист утренней зарядки на 15 минут"],price:"490–1 500 р.",income:"50 продаж × 990 р. = 49 500 р."},
+      {n:"3",name:"Текстовый мини-курс",desc:"3–5 текстовых уроков + рабочие листы.",ex:["3 урока: как перестать срываться на диете","4 урока: питание для похудения без подсчёта","Как разогнать метаболизм — текстовый мини-курс"],price:"1 000–2 500 р.",income:"30 продаж × 1 500 р. = 45 000 р."}
+    ]},
+    B:{title:"Твой формат — видео и марафоны для пассива",sub:"Снимай один раз — получай деньги постоянно. Вот форматы без твоего постоянного участия.",fmts:[
+      {n:"1",name:"Видеоурок",desc:"Одно видео + PDF-программа.",ex:["15-минутная зарядка: как сбросить 5 кг за месяц без зала","Как убрать живот и бока дома: 5 упражнений","ПП без голодовки: меню на 1 500 ккал для занятых"],price:"490–2 000 р.",income:"30 продаж × 1 000 р. = 30 000 р./мес."},
+      {n:"2",name:"Марафон в записи",desc:"30 дней видео-заданий. Включил — и пусть работает.",ex:["30 дней к здоровому телу: марафон похудения","Стройные ноги и плоский живот за месяц","Марафон правильного питания: как перестать срываться"],price:"1 000–5 000 р.",income:"50 участников × 2 000 р. = 100 000 р."},
+      {n:"3",name:"Мини-курс (3–5 видео)",desc:"3–5 коротких видео по одной теме, без проверки.",ex:["Как питаться до и после тренировки: 3 урока + рецепты","Топ-10 жиросжигающих упражнений: 5 видео + программа","Как разогнать метаболизм после 35 — 4 урока"],price:"2 000–5 000 р.",income:"20 участников × 3 990 р. = 79 800 р."}
+    ]},
+    C:{title:"Твой формат — групповые форматы с разбором",sub:"Ты опытный тренер и готова вести людей к результату в группе. Это путь к высокому чеку.",fmts:[
+      {n:"1",name:"Марафон с обратной связью",desc:"30 дней, проверка заданий, живое общение в чате.",ex:["30 дней к здоровому телу: проверка питания и заданий","Марафон похудения с индивидуальными рекомендациями","21 день здорового старта: завтраки, тренировки, разбор"],price:"3 000–8 000 р.",income:"15 участников × 5 000 р. = 75 000 р."},
+      {n:"2",name:"Интенсив с живыми созвонами",desc:"5–7 дней онлайн, разбор питания и тренировок.",ex:["Интенсив «Перезагрузка питания» — 5 дней онлайн","7 дней: как убрать живот — разбор каждого участника","Быстрый старт в ПП: от хаоса к системе за неделю"],price:"5 000–15 000 р.",income:"10 участников × 8 000 р. = 80 000 р."},
+      {n:"3",name:"Мини-курс с обратной связью",desc:"3–5 уроков с проверкой дневников питания.",ex:["5 уроков по составлению рациона с проверкой","Как создать план тренировок под себя — с разбором","4 урока по жиросжиганию с обратной связью"],price:"3 000–8 000 р.",income:"12 участников × 6 000 р. = 72 000 р."}
+    ]},
+    D:{title:"Твой формат — вебинары и аудио без монтажа",sub:"Ты говоришь — они слушают. Никакого монтажа, никакой камеры.",fmts:[
+      {n:"1",name:"Вебинар в записи",desc:"1–2 часа с презентацией. В конце продажа следующего шага.",ex:["Как перестать срываться: 3 стратегии от нутрициолога","Питание для похудения без подсчёта калорий","Как разогнать метаболизм — вебинар с вопросами"],price:"500–2 000 р.",income:"40 продаж × 1 500 р. = 60 000 р."},
+      {n:"2",name:"Аудио-программа",desc:"Записанные аудио-уроки — можно слушать на тренировке.",ex:["Аудио-программа по питанию: 5 уроков в наушниках","Медитация для похудения (10 мин)","5 мотивационных аудио для утренней тренировки"],price:"500–1 500 р.",income:"50 продаж × 1 000 р. = 50 000 р."},
+      {n:"3",name:"Закрытый чат + PDF-план",desc:"Текстовые разборы в чате + материалы.",ex:["Чат поддержки на месяц + недельное меню","ПП-клуб: ежедневные задания и ответы в чате","Клуб здорового питания: рецепты + разборы"],price:"2 000–4 000 р.",income:"20 участников × 3 000 р. = 60 000 р."}
+    ]}
+  },
+  psych:{
+    A:{title:"Твой формат — рабочие листы и PDF без видео",sub:"Ты не хочешь снимать видео и предпочитаешь текстовые форматы. Вот 3 продукта, которые можно сделать за вечер.",fmts:[
+      {n:"1",name:"PDF-рабочий лист (дневник практик)",desc:"Текстовый файл с упражнениями, рефлексией, шаблонами.",ex:["Дневник благодарности на 30 дней — заполняй каждый вечер","Рабочий лист «Колесо баланса» с инструкцией","5 практик от тревоги: распечатай и делай"],price:"300–1 000 р.",income:"100 продаж × 500 р. = 50 000 р."},
+      {n:"2",name:"Гайд «Самодиагностика»",desc:"PDF с вопросами и схемами для выявления проблемы.",ex:["Как понять, что я выгораю? Тест и шкала","Что вызывает мою тревогу? Рабочая тетрадь за 40 минут","Проверь свою самооценку: 15 вопросов + интерпретация"],price:"500–1 500 р.",income:"50 продаж × 990 р. = 49 500 р."},
+      {n:"3",name:"Чек-лист копинг-стратегий",desc:"Список действий в моменте паники или грусти.",ex:["10 способов успокоиться за 5 минут","Мои ресурсные места — шаблон","Что делать, когда накрывает тревога: 15 шагов"],price:"200–500 р.",income:"200 продаж × 300 р. = 60 000 р."}
+    ]},
+    B:{title:"Твой формат — видео и мини-курсы для пассива",sub:"Ты готова снимать видео и хочешь пассивный доход. Вот форматы, которые работают без твоего участия.",fmts:[
+      {n:"1",name:"Вебинар в записи",desc:"Видео + PDF-конспект. В конце — мягкая продажа следующего шага.",ex:["Что делать с тревогой: 3 техники самопомощи","Как работать с прокрастинацией","Как распознать выгорание и восстановиться за 4 недели"],price:"500–2 000 р.",income:"40 продаж × 1 500 р. = 60 000 р."},
+      {n:"2",name:"Видеоурок (одна техника)",desc:"Короткое видео 10–15 мин. Один инструмент — один результат.",ex:["Техника заземления при панической атаке","Когнитивная переоценка за 10 минут","Как остановить поток тревожных мыслей"],price:"300–1 000 р.",income:"50 продаж × 700 р. = 35 000 р."},
+      {n:"3",name:"Мини-курс (3–5 видео без ОС)",desc:"3–5 видео без проверки. Купил — смотрит в своём темпе.",ex:["3 техники от тревоги: видео + рабочие листы","Основы КПТ для себя: 4 урока","Как справляться с паническими атаками — 5 коротких видео"],price:"2 000–5 000 р.",income:"20 участников × 3 000 р. = 60 000 р."}
+    ]},
+    C:{title:"Твой формат — живые практикумы с разбором",sub:"Ты уже опытный специалист и готова масштабироваться. Тебе нужны форматы с живой работой и высоким чеком.",fmts:[
+      {n:"1",name:"Практикум с обратной связью",desc:"7–14 дней, групповой чат, разборы заданий.",ex:["7 дней работы с самооценкой: практики + поддержка","10 дней без паники: марафон с верификацией","Из тревоги к спокойствию: интенсив с разбором"],price:"5 000–15 000 р.",income:"10 участников × 8 000 р. = 80 000 р."},
+      {n:"2",name:"Интенсив с онлайн-созвонами",desc:"3–5 живых встреч, разборы кейсов участников.",ex:["Интенсив «Как перестать тревожиться» — 3 дня по 2 часа","«Ресурс и опора»: 5 встреч для психологического здоровья","Выгорание: причины и восстановление — интенсив"],price:"10 000–25 000 р.",income:"6 участников × 15 000 р. = 90 000 р."},
+      {n:"3",name:"Разбор реальной сессии",desc:"Демонстрация работы с клиентом с комментариями.",ex:["Как я работала с тревогой — запись сессии с пояснениями","Разбор: как помочь клиенту с паническими атаками","КПТ на практике: реальная сессия + разбор техник"],price:"3 000–8 000 р.",income:"20 продаж × 5 000 р. = 100 000 р."}
+    ]},
+    D:{title:"Твой формат — эфиры и аудио без монтажа",sub:"Ты любишь общаться вживую, но не хочешь заморачиваться с монтажом. Вот форматы на основе эфиров и аудио.",fmts:[
+      {n:"1",name:"PDF + запись эфира",desc:"Гайд и видео-пояснение (эфир с презентацией).",ex:["Как выявить деструктивные убеждения — рабочая тетрадь + вебинар","Тревога: откуда и что делать — PDF + 40 мин эфир","Дневник эмоций + вебинар по самопомощи"],price:"1 000–3 000 р.",income:"30 продаж × 2 000 р. = 60 000 р."},
+      {n:"2",name:"Аудио-медитации (набор 3–5 дорожек)",desc:"Только звук, без видео. Слушают в любом месте.",ex:["Медитация от тревоги (15 мин)","Утреннее энергонаполнение — аудио-практика","Заземление здесь и сейчас — голосовая медитация"],price:"500–1 500 р.",income:"50 продаж × 990 р. = 49 500 р."},
+      {n:"3",name:"Групповой чат + записанные уроки",desc:"Чат для вопросов + видеоуроки без лица.",ex:["Поддержка в чате на месяц + еженедельные упражнения","Клуб «Спокойствие»: задания и ответы психолога","Месяц работы с тревогой: чат + PDF-практики"],price:"2 000–4 000 р.",income:"20 участников × 3 000 р. = 60 000 р."}
+    ]}
+  },
+  smm:{
+    A:{title:"Твой формат — шаблоны и PDF без камеры",sub:"Ты умеешь работать с текстами и схемами. Вот 3 формата без видео и без съёмок.",fmts:[
+      {n:"1",name:"PDF-гайд (алгоритмы, чек-листы)",desc:"Готовые схемы и чек-листы, которые сразу применяют.",ex:["50 идей для рилсов на месяц","Чек-лист запуска таргета на 1 000 р.","10 формул вовлекающих постов для блога"],price:"490–1 500 р.",income:"50 продаж × 990 р. = 49 500 р."},
+      {n:"2",name:"Шаблоны (воронки, скрипты)",desc:"Файлы Excel, Word — берёшь и используешь.",ex:["Скрипты прогрева сторис (5 дней)","Воронка лид-магнита — шаблон","Контент-план на 30 дней — заполни за час"],price:"500–2 000 р.",income:"30 продаж × 1 500 р. = 45 000 р."},
+      {n:"3",name:"Список ресурсов и инструментов",desc:"PDF со ссылками на сервисы, ИИ, библиотеки.",ex:["100 сервисов для SMM: аналитика, дизайн, автопостинг","ИИ-инструменты для контент-маркетолога 2025","Бесплатные площадки для дизайна сторис"],price:"300–1 000 р.",income:"100 продаж × 500 р. = 50 000 р."}
+    ]},
+    B:{title:"Твой формат — видео-уроки с демонстрацией экрана",sub:"Ты любишь снимать и хочешь, чтобы продукт продавался без тебя. Вот твои форматы.",fmts:[
+      {n:"1",name:"Видеоурок с демонстрацией экрана",desc:"10–20 мин + PDF. Никакого лица — только экран и голос.",ex:["Как настроить таргет в ВК за 20 минут","Как сделать прогрев сторис: схема + пример","Как создать вовлекающий рилс: монтаж за 15 минут"],price:"500–2 000 р.",income:"30 продаж × 1 500 р. = 45 000 р."},
+      {n:"2",name:"Мини-курс (3–5 видео без ОС)",desc:"3–5 коротких видео — покупают и смотрят сами.",ex:["3 видео: как делать рилсы без монтажа","5 уроков по контент-плану","4 видео: как настроить автоворонку через сторис"],price:"2 000–5 000 р.",income:"20 участников × 3 000 р. = 60 000 р."},
+      {n:"3",name:"Набор шаблонов + видео-инструкция",desc:"Архив файлов + одно видео 10 мин как их использовать.",ex:["15 готовых текстов для рассылок + видео «как адаптировать»","Шаблоны сторис + видео настройки в Canva","Скрипты продаж + видео как работать с возражениями"],price:"1 000–2 500 р.",income:"40 продаж × 1 500 р. = 60 000 р."}
+    ]},
+    C:{title:"Твой формат — групповые разборы и практикумы",sub:"Ты профи и хочешь выйти на новый доход. Тебе нужны форматы с живой работой.",fmts:[
+      {n:"1",name:"Практикум с обратной связью",desc:"7–14 дней, групповой разбор аккаунтов и воронок.",ex:["5 дней: упаковка блога под ключ — разбор профилей","Марафон «10 рилсов за 10 дней» с проверкой","7 дней: пишем продающий контент с разбором"],price:"5 000–15 000 р.",income:"8 участников × 10 000 р. = 80 000 р."},
+      {n:"2",name:"Интенсив с разбором кейсов",desc:"3–5 живых созвонов с разбором каждого участника.",ex:["Интенсив по автоворонкам: от настройки до первых лидов","3 дня: создаём стратегию SMM под твой бизнес","Интенсив по таргету: настройка + анализ + оптимизация"],price:"10 000–20 000 р.",income:"5 участников × 15 000 р. = 75 000 р."},
+      {n:"3",name:"Разбор реальной воронки клиента",desc:"Видео + PDF с пошаговым анализом результата.",ex:["Как я подняла продажи клиенту на 300% — разбор шагов","Кейс: запуск бренда с нуля за 2 месяца","Как мы получили 500 подписчиков бесплатно — детальный разбор"],price:"3 000–7 000 р.",income:"15 продаж × 5 000 р. = 75 000 р."}
+    ]},
+    D:{title:"Твой формат — вебинары и текстовые разборы",sub:"Ты предпочитаешь вебинары и тексты — вот что тебе подойдёт.",fmts:[
+      {n:"1",name:"Вебинар в записи",desc:"1–2 часа с примерами экрана. Продажа в конце.",ex:["Как создавать вовлекающий контент — вебинар + примеры","Рилсы для продаж: структура, съёмка, монтаж — 2 часа","Таргет для новичков: от создания кабинета до первых лидов"],price:"1 000–3 000 р.",income:"30 продаж × 2 000 р. = 60 000 р."},
+      {n:"2",name:"PDF-гайд + вебинар (комбо)",desc:"Чек-лист + запись эфира по теме.",ex:["Чек-лист по таргету + вебинар «Как запустить рекламу»","Контент-план PDF + эфир «Как его выполнять»","Скрипты продаж + вебинар «Как адаптировать под себя»"],price:"2 000–4 000 р.",income:"25 продаж × 3 000 р. = 75 000 р."},
+      {n:"3",name:"Закрытый чат-клуб + PDF",desc:"Только текстовое общение, без созвонов.",ex:["Клуб SMM-специалистов: месяц разборов и ответов в чате","SMM на практике: еженедельные задания + ваши вопросы","Клуб по рилсам: идеи, разборы, тренды — без созвонов"],price:"3 000–7 000 р.",income:"15 участников × 5 000 р. = 75 000 р."}
+    ]}
+  },
+  design:{
+    A:{title:"Твой формат — файлы и PDF без съёмок",sub:"Ты не хочешь снимать видео, но можешь делиться файлами и текстами — это уже продукт!",fmts:[
+      {n:"1",name:"PDF «Список ресурсов»",desc:"Ссылки на шрифты, картинки, ИИ-инструменты.",ex:["100+ ресурсов для дизайнера на 2026 год","Бесплатные шрифты для коммерческих проектов: 50 ссылок","Лучшие ИИ-инструменты для иллюстраторов"],price:"300–1 000 р.",income:"100 продаж × 500 р. = 50 000 р."},
+      {n:"2",name:"Набор шаблонов (PSD / Figma / AI)",desc:"Исходники — только загрузка файла.",ex:["Шаблоны для 10 мокапов в PSD","Коллекция стрелок и форм для Figma","20 готовых презентаций в Canva"],price:"500–1 500 р.",income:"50 продаж × 1 000 р. = 50 000 р."},
+      {n:"3",name:"Чек-лист подготовки / портфолио",desc:"PDF с конкретным планом действий.",ex:["Чек-лист для портфолио фрилансера: что должно быть","Как правильно оформить кейс — пошагово","10 ошибок дизайнеров при показе работ"],price:"200–800 р.",income:"100 продаж × 500 р. = 50 000 р."}
+    ]},
+    B:{title:"Твой формат — видео с демонстрацией экрана",sub:"Ты умеешь снимать экран и монтировать. Вот продукты, которые принесут доход без твоего участия.",fmts:[
+      {n:"1",name:"Видеоурок (демонстрация приёма)",desc:"10–15 мин + исходный файл. Один трюк — один продукт.",ex:["Анимация в Figma за 10 минут","Как сделать мокап в Фотошопе — 3 способа","5 хитростей иллюстрации в векторе для новичков"],price:"500–2 000 р.",income:"30 продаж × 1 500 р. = 45 000 р."},
+      {n:"2",name:"Мини-курс (3–5 видео без ОС)",desc:"3–5 видео по одной теме. Пассивный формат.",ex:["3 урока: типографика для дизайнера","5 уроков по иллюстрации в Procreate","4 видео: UI-дизайн на практике в Figma"],price:"2 000–5 000 р.",income:"20 участников × 3 500 р. = 70 000 р."},
+      {n:"3",name:"Набор пресетов + видео-инструкция",desc:"Архив файлов + короткое видео как использовать.",ex:["20 пресетов для Lightroom + видео «как установить»","Набор текстур + видео «как применять»","Шаблоны Canva + видео-инструкция по настройке"],price:"1 000–2 500 р.",income:"30 продаж × 1 500 р. = 45 000 р."}
+    ]},
+    C:{title:"Твой формат — живые разборы и практикумы",sub:"Ты опытный дизайнер и готов учить других с разбором их работ.",fmts:[
+      {n:"1",name:"Практикум с обратной связью",desc:"5–7 дней заданий, ты разбираешь работы участников.",ex:["5 дней: создаём лендинг в Figma с нуля с разбором","Марафон по типографике: как подбирать шрифты","Интенсив: дизайн презентации за 3 дня с ОС"],price:"5 000–15 000 р.",income:"8 участников × 8 000 р. = 64 000 р."},
+      {n:"2",name:"Интенсив с живыми разборами",desc:"3–5 созвонов с разбором проектов.",ex:["Коммерческая иллюстрация: от скетча до заказчика","Интенсив «Как поднять чек дизайнера»: позиционирование + портфолио","Дизайн-система в Figma: 3 дня интенсива"],price:"10 000–20 000 р.",income:"5 участников × 15 000 р. = 75 000 р."},
+      {n:"3",name:"Разбор кейса",desc:"Видео + PDF с анализом реального проекта.",ex:["Как я делал дизайн для бренда: от брифа до финала","Кейс: лендинг с конверсией 12% — что я сделал","Разбор реального логотипа: от задачи до результата"],price:"3 000–7 000 р.",income:"20 продаж × 5 000 р. = 100 000 р."}
+    ]},
+    D:{title:"Твой формат — вебинары и тексты без монтажа",sub:"Ты любишь вебинары и тексты, но не хочешь снимать обучающие видео.",fmts:[
+      {n:"1",name:"Вебинар в записи",desc:"Один длинный эфир с показом экрана.",ex:["Как собрать портфолио для фриланса — вебинар 1,5 часа","Figma для начинающих: полный разбор интерфейса","Как найти клиентов дизайнеру — вебинар + список мест"],price:"1 000–3 000 р.",income:"30 продаж × 2 000 р. = 60 000 р."},
+      {n:"2",name:"PDF + короткое видео",desc:"Чек-лист + 10 минут объяснения.",ex:["Чек-лист для Figma + видео «10 горячих клавиш»","Гайд по шрифтам + видео «как их сочетать»","Чек-лист перед сдачей макета + видео разбор"],price:"800–2 000 р.",income:"40 продаж × 1 500 р. = 60 000 р."},
+      {n:"3",name:"Клуб дизайнеров (чат без созвонов)",desc:"Месяц заданий и критики в чате.",ex:["Клуб дизайнеров: месяц заданий и разборов","UI-ревью в чате: ты показываешь — я комментирую","Закрытое сообщество: тренды, задания, критика"],price:"3 000–7 000 р.",income:"15 участников × 5 000 р. = 75 000 р."}
+    ]}
+  },
+  tutor:{
+    A:{title:"Твой формат — шпаргалки и сборники заданий",sub:"Ты не хочешь снимать видео, но у тебя есть знания, которые можно упаковать в текст.",fmts:[
+      {n:"1",name:"PDF-шпаргалка / конспект",desc:"Один файл с формулами, правилами, схемами.",ex:["Таблица неправильных глаголов с примерами","Шпаргалка по решению задач на проценты","Правила пунктуации на одном листе"],price:"200–800 р.",income:"100 продаж × 500 р. = 50 000 р."},
+      {n:"2",name:"Сборник заданий с ответами",desc:"PDF с упражнениями и ответами.",ex:["50 заданий по орфографии + ответы","20 текстов для изложения с критериями","30 задач по ОГЭ по математике с разбором"],price:"500–1 500 р.",income:"50 продаж × 1 000 р. = 50 000 р."},
+      {n:"3",name:"Чек-лист «Как подготовиться к экзамену»",desc:"Пошаговый план подготовки.",ex:["Чек-лист подготовки к ЕГЭ по русскому за 3 месяца","Что делать за 2 недели до ОГЭ по математике","Чек-лист для подготовки к IELTS с нуля"],price:"200–500 р.",income:"200 продаж × 300 р. = 60 000 р."}
+    ]},
+    B:{title:"Твой формат — видеоуроки и мини-курсы",sub:"Ты готов объяснять на видео. Вот форматы, которые приносят деньги даже ночью.",fmts:[
+      {n:"1",name:"Видеоурок (разбор сложной темы)",desc:"Одно видео + PDF-конспект.",ex:["Как подготовиться к ЕГЭ по русскому: 3 частые ошибки","Таблица умножения за 15 минут — метод для детей","Разбор задания №13 по математике — пошагово"],price:"500–2 000 р.",income:"50 продаж × 990 р. = 49 500 р."},
+      {n:"2",name:"Мини-курс (3–5 видео без ОС)",desc:"3–5 коротких видео по одной теме.",ex:["3 урока: артикли в английском","5 уроков по подготовке к ОГЭ по обществознанию","Как выучить неправильные глаголы — 4 видео + таблица"],price:"1 500–5 000 р.",income:"20 участников × 3 000 р. = 60 000 р."},
+      {n:"3",name:"Марафон в записи",desc:"7 дней видео-заданий, без проверки.",ex:["7 дней к идеальному сочинению — видеоуроки и шаблоны","7 дней к IELTS Writing: задание + видео-разбор","Марафон по русскому: правило дня + упражнение"],price:"1 000–3 000 р.",income:"30 продаж × 2 000 р. = 60 000 р."}
+    ]},
+    C:{title:"Твой формат — живые практикумы с проверкой",sub:"Ты опытный педагог и готов вести группы. Это путь к высокому чеку.",fmts:[
+      {n:"1",name:"Практикум с обратной связью",desc:"5–10 дней, проверка домашних заданий.",ex:["5 дней: пишем сочинение без ошибок — разбор каждого абзаца","Марафон по грамматике английского с проверкой","Пишем эссе на 5+ баллов: 7 дней с разбором"],price:"3 000–10 000 р.",income:"8 участников × 6 000 р. = 48 000 р."},
+      {n:"2",name:"Интенсив с живыми созвонами",desc:"3–5 встреч в Zoom, разбор сложных тем.",ex:["Интенсив по параметрам ЕГЭ по математике — 3 дня","IELTS Speaking: 5 Zoom-занятий с практикой","ОГЭ-интенсив по русскому: от теории до практики"],price:"5 000–15 000 р.",income:"10 участников × 10 000 р. = 100 000 р."},
+      {n:"3",name:"Мини-курс с обратной связью",desc:"3–5 уроков с проверкой заданий.",ex:["3 урока по устранению пробелов в пунктуации с ОС","Курс по написанию сочинения с проверкой каждого черновика","Английские времена с разбором ошибок каждого"],price:"3 000–7 000 р.",income:"15 участников × 5 000 р. = 75 000 р."}
+    ]},
+    D:{title:"Твой формат — вебинары и аудио-лекции",sub:"Ты любишь живые эфиры и текстовые материалы. Вот комбо-форматы.",fmts:[
+      {n:"1",name:"Вебинар в записи",desc:"1–2 часа с продажей в конце.",ex:["Как быстро выучить стихотворение — вебинар + мнемотехники","ЕГЭ по русскому: разбор самых трудных заданий","Как подготовить ребёнка к ОГЭ — вебинар для родителей"],price:"500–1 500 р.",income:"40 продаж × 1 000 р. = 40 000 р."},
+      {n:"2",name:"Аудио-лекции + PDF-конспект",desc:"Текстовый конспект и аудио с объяснением.",ex:["5 аудио-уроков по истории России + конспекты","Слушаем правила английского в машине — подкаст","10 правил пунктуации в аудио + примеры"],price:"1 000–2 500 р.",income:"30 продаж × 1 500 р. = 45 000 р."},
+      {n:"3",name:"Чат-поддержка + PDF-задания",desc:"Текстовое сопровождение без видео.",ex:["Чат-поддержка по биологии на месяц + PDF-задания","Репетиторский чат: ваш вопрос — мой ответ в течение суток","Месяц с репетитором в переписке: задания и разборы"],price:"2 000–5 000 р.",income:"20 участников × 3 000 р. = 60 000 р."}
+    ]}
+  },
+  handmade:{
+    A:{title:"Твой формат — схемы, выкройки и PDF",sub:"Ты не хочешь снимать видео, но можешь делиться схемами и чек-листами. Это работает!",fmts:[
+      {n:"1",name:"PDF-схемы / выкройки",desc:"Файл для скачивания — сразу к работе.",ex:["Схема вязания игрушки амигуруми (3 размера)","Выкройка сумки-шоппера","Схема плетения украшений из бисера — 5 вариантов"],price:"300–1 000 р.",income:"100 продаж × 500 р. = 50 000 р."},
+      {n:"2",name:"Список магазинов и поставщиков",desc:"PDF с проверенными адресами закупок.",ex:["Где покупать фурнитуру для бижутерии оптом — 10 мест","Магазины материалов для лепки: ссылки + отзывы","Лучшие поставщики ткани с ценами и контактами"],price:"200–600 р.",income:"100 продаж × 400 р. = 40 000 р."},
+      {n:"3",name:"Чек-лист упаковки и отправки",desc:"Пошаговая инструкция.",ex:["Как упаковать и отправить hand-made изделие","Чек-лист подготовки к маркету: что взять","Как сфотографировать изделие для Ozon и Wildberries"],price:"200–500 р.",income:"200 продаж × 300 р. = 60 000 р."}
+    ]},
+    B:{title:"Твой формат — мастер-классы и мини-курсы на видео",sub:"Ты готова показывать процесс на видео. Вот продукты, которые продаются без твоего участия.",fmts:[
+      {n:"1",name:"Мастер-класс (видео с процессом)",desc:"Один МК, где показываешь создание изделия + схема/выкройка.",ex:["Вязаная игрушка амигуруми за вечер — пошагово","Как сделать ароматическую свечу дома — 3 рецепта","Создаём интерьерную куклу за 2 часа"],price:"500–2 000 р.",income:"40 продаж × 1 000 р. = 40 000 р."},
+      {n:"2",name:"Мини-курс (3–5 видео без ОС)",desc:"3–5 коротких видео по одной технике.",ex:["3 видео по декупажу для новичков","5 уроков по лепке из полимерной глины","4 урока: создаём украшения из смолы"],price:"2 000–5 000 р.",income:"20 участников × 3 500 р. = 70 000 р."},
+      {n:"3",name:"Марафон в записи (7 дней)",desc:"7 видео-заданий — покупает и делает в своём темпе.",ex:["7 дней: создаём кукольный домик из картона","7 уроков по вязанию крючком для начинающих","7 дней к интерьерной игрушке: видео каждый день"],price:"1 000–3 000 р.",income:"30 участников × 2 000 р. = 60 000 р."}
+    ]},
+    C:{title:"Твой формат — практикумы с разбором работ",sub:"Ты опытный мастер и можешь учить других, разбирая их результаты.",fmts:[
+      {n:"1",name:"Практикум с обратной связью",desc:"5–7 дней, участники показывают этапы, ты комментируешь.",ex:["5 дней лепим украшения из глины — разбор каждого шага","7 дней: создаём игрушку с разбором пропорций и текстур","Практикум по декупажу: показываешь — я объясняю ошибки"],price:"3 000–10 000 р.",income:"10 участников × 5 000 р. = 50 000 р."},
+      {n:"2",name:"Интенсив с онлайн-созвонами",desc:"3–5 живых встреч с демонстрацией и вопросами.",ex:["Интенсив «Как снять и продать мастер-класс онлайн»","3 дня: создаём украшение из смолы с Zoom-сопровождением","Интенсив по авторской игрушке: от идеи до продажи"],price:"5 000–15 000 р.",income:"8 участников × 8 000 р. = 64 000 р."},
+      {n:"3",name:"Разбор кейса с ошибками",desc:"Видео + PDF — показываешь неудачу и как её исправить.",ex:["Разбор неудачной игрушки: как исправить пропорции и текстуру","Почему это украшение не купили: разбор ошибок упаковки","Кейс: как я переделала МК и продала в 3 раза больше"],price:"2 000–6 000 р.",income:"15 продаж × 4 000 р. = 60 000 р."}
+    ]},
+    D:{title:"Твой формат — вебинары и PDF без монтажа",sub:"Ты не хочешь снимать много видео, но готова провести эфир. Вот комбо.",fmts:[
+      {n:"1",name:"Вебинар в записи",desc:"1–2 часа с показом материалов и примеров.",ex:["Как выбрать материалы для декупажа — вебинар + списки","Эпоксидная смола для начинающих: всё за 1,5 часа","Как продавать hand-made: маркетплейсы vs свои каналы"],price:"500–1 500 р.",income:"40 продаж × 1 000 р. = 40 000 р."},
+      {n:"2",name:"PDF-гайд + аудио-пояснения",desc:"Текст + аудио. Слушают в машине или на работе за руками.",ex:["Гайд по эпоксидной смоле + аудио-комментарии к шагам","Схема + аудио: «как я объясняю клиентам технологию»","PDF по вязанию + аудио разбор типичных ошибок"],price:"1 000–2 500 р.",income:"30 продаж × 1 500 р. = 45 000 р."},
+      {n:"3",name:"Клуб мастеров (чат без созвонов)",desc:"Текстовые разборы и задания в чате.",ex:["Клуб hand-made мастеров: задания и обсуждения","Ежедневный МК-марафон в чате: делаем — показываем","Закрытый клуб: рецепты, схемы, вопросы-ответы"],price:"2 000–5 000 р.",income:"20 участников × 3 000 р. = 60 000 р."}
+    ]}
+  },
+  health:{
+    A:{title:"Твой формат — PDF-техники и планы восстановления",sub:"Ты не любишь видео, но у тебя есть техники, которые можно упаковать в текст и картинки.",fmts:[
+      {n:"1",name:"PDF-описание техник самомассажа",desc:"Инструкция с фотографиями или схемами.",ex:["Как снять боль в шее за 10 минут — 3 приёма","Самомассаж стоп для снятия усталости","Лимфодренажный массаж лица: схема точек"],price:"300–1 000 р.",income:"100 продаж × 500 р. = 50 000 р."},
+      {n:"2",name:"Чек-лист движений на каждый день",desc:"Список упражнений с картинками.",ex:["10 упражнений для здоровой спины — чек-лист","Утренняя гимнастика на 5 минут: 7 движений с фото","Упражнения при шейном остеохондрозе: схема"],price:"200–600 р.",income:"100 продаж × 400 р. = 40 000 р."},
+      {n:"3",name:"План восстановления",desc:"PDF с режимом и упражнениями на неделю.",ex:["План по восстановлению после тренировок на неделю","7-дневная программа для здоровой спины (текст + схемы)","Протокол снятия усталости после рабочего дня"],price:"500–1 500 р.",income:"50 продаж × 1 000 р. = 50 000 р."}
+    ]},
+    B:{title:"Твой формат — видео с демонстрацией техник",sub:"Ты готова показывать техники на видео. Вот продукты без обратной связи.",fmts:[
+      {n:"1",name:"Видеоурок (демонстрация техники)",desc:"Одно видео + PDF с этапами.",ex:["Как снять отёки с лица лимфодренажным массажем","Что делать, если заклинило спину — техника дома","Самомассаж шеи: 5 движений за 5 минут"],price:"500–2 000 р.",income:"30 продаж × 1 000 р. = 30 000 р."},
+      {n:"2",name:"Мини-курс (3–5 видео)",desc:"3–5 видео по одной теме — полный пассив.",ex:["3 урока: классический массаж дома","5 видео по самомассажу для лица","Как справиться с головной болью без таблеток — 4 приёма"],price:"2 000–5 000 р.",income:"20 участников × 3 500 р. = 70 000 р."},
+      {n:"3",name:"Марафон в записи",desc:"7–14 дней видео. Включил — и работает.",ex:["7 дней здоровой спины — ежедневные видео-упражнения","14-дневный марафон для здоровых суставов","10 дней без боли в шее: видео-практика"],price:"1 000–3 000 р.",income:"30 участников × 2 000 р. = 60 000 р."}
+    ]},
+    C:{title:"Твой формат — групповые программы с разбором",sub:"Ты опытный специалист и можешь вести групповые программы. Это твой путь к высокому чеку.",fmts:[
+      {n:"1",name:"Практикум с обратной связью",desc:"7–14 дней, проверка выполнения техник.",ex:["7 дней здоровой спины с проверкой выполнения","Марафон по осанке: как убрать сутулость за 2 недели","10 дней без боли: программа с личным контролем"],price:"5 000–15 000 р.",income:"12 участников × 7 000 р. = 84 000 р."},
+      {n:"2",name:"Интенсив с живыми созвонами",desc:"3–5 встреч Zoom, разбор техник.",ex:["Интенсив «Ноги без отёков и варикоза» — практики и разбор","3-дневный Zoom-интенсив по здоровью позвоночника","Как работать с хроническим напряжением — 5 встреч"],price:"10 000–20 000 р.",income:"8 участников × 15 000 р. = 120 000 р."},
+      {n:"3",name:"Разбор реальной сессии",desc:"Запись работы с клиентом + комментарии.",ex:["Как я работал с зажимом в плече — запись сессии с пояснениями","Разбор: как убрать боль в пояснице за 3 сеанса","Кейс: работа с хроническим шейным синдромом"],price:"3 000–8 000 р.",income:"20 продаж × 5 000 р. = 100 000 р."}
+    ]},
+    D:{title:"Твой формат — вебинары и аудио-практики",sub:"Ты любишь рассказывать в эфирах и давать текстовые материалы.",fmts:[
+      {n:"1",name:"Вебинар в записи",desc:"1–2 часа с демонстрацией упражнений.",ex:["Как работать с крестцово-подвздошным сочленением","Вебинар: почему болит поясница и что с этим делать","Лимфодренаж дома: вебинар + список движений"],price:"1 000–2 500 р.",income:"30 продаж × 1 500 р. = 45 000 р."},
+      {n:"2",name:"Аудио-упражнения (подкаст-формат)",desc:"3–5 аудиодорожек — слушаешь и делаешь.",ex:["5 аудио-практик на снятие боли в пояснице","Расслабление шеи голосом: аудио-сессия","Медитация на расслабление тела (20 мин)"],price:"500–1 500 р.",income:"50 продаж × 1 000 р. = 50 000 р."},
+      {n:"3",name:"Клуб здоровья (чат + PDF)",desc:"Текстовые разборы и рекомендации в чате.",ex:["Клуб массажистов: задания и ответы на вопросы","Месяц с вашим массажистом: советы и разборы онлайн","Чат «Спина без боли»: ежедневные задания + ответы"],price:"2 000–5 000 р.",income:"20 участников × 3 000 р. = 60 000 р."}
+    ]}
+  },
+  biz:{
+    A:{title:"Твой формат — шаблоны и гайды без камеры",sub:"Ты не хочешь снимать видео, но можешь делиться шаблонами и схемами — это бизнес-продукт.",fmts:[
+      {n:"1",name:"PDF-чек-лист (финансы, налоги, юридика)",desc:"Конкретные шаги, которые применяют сразу.",ex:["Налоги для ИП на УСН — чек-лист за 5 минут","Какие договоры нужны на старте бизнеса","Чек-лист открытия первого расчётного счёта"],price:"500–1 500 р.",income:"50 продаж × 1 000 р. = 50 000 р."},
+      {n:"2",name:"Шаблоны документов (Excel, Word)",desc:"Файлы, которые берут и заполняют.",ex:["Финансовая модель для малого бизнеса (Excel)","Договор с клиентом — универсальный шаблон","Таблица учёта расходов и доходов"],price:"500–2 000 р.",income:"30 продаж × 1 500 р. = 45 000 р."},
+      {n:"3",name:"Гайд «Как увеличить прибыль без рекламы»",desc:"PDF с конкретными шагами.",ex:["10 способов повысить чек сегодня","Как поднять прибыль на 20% без новых клиентов","Чек-лист аудита бизнеса: где теряются деньги"],price:"1 000–2 500 р.",income:"40 продаж × 1 500 р. = 60 000 р."}
+    ]},
+    B:{title:"Твой формат — видеоуроки по бизнес-задачам",sub:"Ты готов объяснять на видео. Вот форматы, которые продаются без твоего участия.",fmts:[
+      {n:"1",name:"Видеоурок (конкретная бизнес-задача)",desc:"10–20 мин + PDF-шаблон.",ex:["Как внедрить систему задач в команде за 1 день","Юридические ошибки при старте ИП — что нельзя делать","Расчёт точки безубыточности за 15 минут"],price:"1 000–5 000 р.",income:"20 продаж × 3 000 р. = 60 000 р."},
+      {n:"2",name:"Мини-курс (3–5 видео без ОС)",desc:"3–5 видео по одной теме.",ex:["3 урока: как нанять первого сотрудника","4 видео по юнит-экономике","5 уроков по выходу на маркетплейс"],price:"3 000–8 000 р.",income:"15 участников × 5 000 р. = 75 000 р."},
+      {n:"3",name:"Набор шаблонов + видео-инструкция",desc:"Архив файлов + одно видео как использовать.",ex:["5 воронок продаж + видео «как настроить в CRM»","Шаблоны регламентов + видео «как их внедрить»","Система KPI в Excel + видео «как работает»"],price:"2 000–5 000 р.",income:"20 продаж × 4 000 р. = 80 000 р."}
+    ]},
+    C:{title:"Твой формат — групповые разборы и интенсивы",sub:"Ты набрал форму и готов запускать групповые программы с разбором кейсов.",fmts:[
+      {n:"1",name:"Практикум с обратной связью",desc:"5–7 дней, разбор бизнесов участников.",ex:["5 дней: упаковка бизнеса под ключ — разбор каждого шага","Марафон по автоматизации продаж","7 дней: стратегия роста — разбор каждого участника"],price:"10 000–25 000 р.",income:"7 участников × 15 000 р. = 105 000 р."},
+      {n:"2",name:"Интенсив с живыми созвонами",desc:"3–5 встреч Zoom, разбор кейсов.",ex:["Интенсив по масштабированию на маркетплейсы — 3 дня","«Выход на 1 млн»: 5 сессий стратегического планирования","Системный бизнес за 7 дней: живые разборы"],price:"20 000–50 000 р.",income:"5 участников × 30 000 р. = 150 000 р."},
+      {n:"3",name:"Разбор реального кейса с цифрами",desc:"Видео + PDF с пошаговым анализом.",ex:["Как я увеличил выручку с 500 тыс до 2 млн — разбор","Кейс: выход на маркетплейс с 0 до 500 тыс/мес","Ошибки масштабирования: как я потерял деньги и что исправил"],price:"5 000–15 000 р.",income:"15 продаж × 8 000 р. = 120 000 р."}
+    ]},
+    D:{title:"Твой формат — вебинары и текстовые разборы",sub:"Ты предпочитаешь вебинары и текстовые разборы без видео-монтажа.",fmts:[
+      {n:"1",name:"Вебинар в записи",desc:"1–2 часа с продажей в конце.",ex:["Как перестать сливать бюджет на таргет — 3 стратегии","Система найма сотрудников без HR за 4 недели","Воронка продаж для малого бизнеса: от лида до оплаты"],price:"2 000–5 000 р.",income:"30 продаж × 3 000 р. = 90 000 р."},
+      {n:"2",name:"PDF-гайд + запись эфира",desc:"Чек-лист и вебинар по теме.",ex:["Чек-лист открытия ИП + вебинар «4 ошибки новичков»","Финансовый PDF + эфир «как читать свою финансовую модель»","Гайд по маркетплейсу + вебинар «первые шаги»"],price:"1 500–4 000 р.",income:"25 продаж × 2 500 р. = 62 500 р."},
+      {n:"3",name:"Закрытый бизнес-клуб (чат без созвонов)",desc:"Текстовые консультации в чате.",ex:["Закрытый клуб предпринимателей: месяц вопросов и ответов","Бизнес-клуб: еженедельные разборы ошибок + PDF","Клуб малого бизнеса: задания, шаблоны, ответы"],price:"5 000–15 000 р.",income:"10 участников × 8 000 р. = 80 000 р."}
+    ]}
+  },
+  esoteric:{
+    A:{title:"Твой формат — PDF-расчёты и схемы раскладов",sub:"Ты не хочешь показывать лицо, но можешь делиться расчётами и раскладами в тексте.",fmts:[
+      {n:"1",name:"PDF-расчёт (нумерология, астрология)",desc:"Готовые схемы для самостоятельного расчёта.",ex:["Как рассчитать свой Аркан Судьбы за 5 минут","Таблица денежных дней на 2026 год","Нумерологический код имени: инструкция"],price:"300–1 000 р.",income:"100 продаж × 500 р. = 50 000 р."},
+      {n:"2",name:"Схемы раскладов Таро",desc:"PDF с картинками и значениями карт.",ex:["3 денежных расклада Таро для начинающих","Расклад на месяц — пошаговая инструкция","Расклад на отношения: 5 позиций + интерпретация"],price:"500–1 500 р.",income:"50 продаж × 1 000 р. = 50 000 р."},
+      {n:"3",name:"Чек-лист по чистке энергии",desc:"Конкретные действия, которые делают сразу.",ex:["Как почистить дом за 15 минут: ритуалы и аффирмации","Чек-лист работы с денежным мышлением","Ежедневные практики для привлечения изобилия"],price:"200–600 р.",income:"100 продаж × 400 р. = 40 000 р."}
+    ]},
+    B:{title:"Твой формат — видео-расклады и обучающие курсы",sub:"Ты готова записывать видео-расклады и расчёты. Вот форматы для пассивного дохода.",fmts:[
+      {n:"1",name:"Видеоурок (расчёт или расклад)",desc:"10–20 мин + PDF-шпаргалка.",ex:["Как рассчитать свой нумерологический код на год","Расклад на отношения — 3 позиции в деталях","3 денежных расклада Таро: видео-разбор"],price:"500–2 000 р.",income:"40 продаж × 1 000 р. = 40 000 р."},
+      {n:"2",name:"Мини-курс (3–5 видео)",desc:"3–5 видео по одному инструменту.",ex:["5 уроков: расклады Таро для начинающих","4 видео по астрологии: планеты и дома","3 урока: нумерология — число судьбы, имени, партнёра"],price:"2 000–7 000 р.",income:"15 участников × 5 000 р. = 75 000 р."},
+      {n:"3",name:"Марафон в записи (7 дней)",desc:"7 дней видео-заданий по расчётам или раскладам.",ex:["7 дней с Таро: каждый день новый расклад","7 уроков нумерологии — считаем за неделю","7-дневный астро-марафон: изучаем свою натальную карту"],price:"1 000–3 000 р.",income:"30 участников × 2 000 р. = 60 000 р."}
+    ]},
+    C:{title:"Твой формат — живые практикумы с разбором",sub:"Ты уже практик и можешь вести группы с разбором раскладов и практик.",fmts:[
+      {n:"1",name:"Практикум с обратной связью",desc:"7–10 дней, разбор работ участников.",ex:["7 дней с Таро — расклады на деньги, любовь, карьеру с ОС","Марафон по чистке родовых каналов с поддержкой","10 дней: нумерология на каждый день с разбором"],price:"5 000–15 000 р.",income:"15 участников × 7 000 р. = 105 000 р."},
+      {n:"2",name:"Интенсив с живыми разборами",desc:"3–5 встреч Zoom, разбор вопросов участников.",ex:["Интенсив «Как войти в поток изобилия» — практики и ответы","3 дня: работаем с денежным каналом вместе","Астро-интенсив: твоя карта + твои точки роста"],price:"10 000–20 000 р.",income:"8 участников × 15 000 р. = 120 000 р."},
+      {n:"3",name:"Разбор реального расклада",desc:"Видео-разбор реального расклада или расчёта с комментариями.",ex:["Разбор расклада на бизнес клиента — что сработало","Астро-разбор натальной карты: о деньгах и карьере","Нумерологический анализ 2025 года клиента — видео-сессия"],price:"3 000–8 000 р.",income:"20 продаж × 5 000 р. = 100 000 р."}
+    ]},
+    D:{title:"Твой формат — эфиры, медитации и тексты",sub:"Ты любишь говорить в эфирах и давать текстовые шпаргалки.",fmts:[
+      {n:"1",name:"Вебинар в записи",desc:"1–2 часа по теме.",ex:["Астрология для начинающих: планеты в домах — вебинар","Таро для себя: как читать расклады без ошибок","Нумерология 2026: что ждёт по годам жизни"],price:"1 000–2 500 р.",income:"30 продаж × 1 500 р. = 45 000 р."},
+      {n:"2",name:"Аудио-медитации / аффирмации",desc:"3–5 аудиодорожек для практики.",ex:["Медитация на деньги (20 мин)","Аффирмации для защиты и чистоты","Практика привлечения партнёра — голосовая медитация"],price:"500–1 500 р.",income:"50 продаж × 1 000 р. = 50 000 р."},
+      {n:"3",name:"Закрытый клуб (чат + PDF)",desc:"Месяц раскладов и заданий в чате.",ex:["Закрытый эзотерический клуб: расклады и задания","Астро-клуб: еженедельный разбор энергий месяца","Клуб «Денежная практика»: медитации + задания + ответы"],price:"2 000–5 000 р.",income:"20 участников × 3 500 р. = 70 000 р."}
+    ]}
+  },
+  other:{
+    A:{title:"Твой формат — PDF и шаблоны без видео",sub:"Ты не хочешь заморачиваться с видео. Вот 3 формата только на основе текстов.",fmts:[
+      {n:"1",name:"PDF-гайд (решение конкретной проблемы)",desc:"Один файл — одна проблема — одно решение.",ex:["Как освоить базовые навыки за день (ваша тема)","Лайфхак для экономии времени (ваша задача)","Чек-лист: что нужно сделать перед запуском"],price:"300–1 000 р.",income:"100 продаж × 500 р. = 50 000 р."},
+      {n:"2",name:"Шаблон + инструкция (Word/Excel)",desc:"Берёшь и используешь.",ex:["Шаблон листа учёта клиентов","Готовый план на месяц — заполни под себя","Шаблон скриптов для вашей ниши"],price:"500–1 500 р.",income:"50 продаж × 1 000 р. = 50 000 р."},
+      {n:"3",name:"Чек-лист действий",desc:"Пошаговый план к результату.",ex:["10 шагов к результату в вашей теме","Чек-лист запуска первого продукта","Что сделать сегодня, чтобы получить первых клиентов"],price:"200–500 р.",income:"200 продаж × 300 р. = 60 000 р."}
+    ]},
+    B:{title:"Твой формат — видеоуроки и мини-курсы",sub:"Ты готова снимать видео. Вот простые продукты с пассивным доходом.",fmts:[
+      {n:"1",name:"Видеоурок",desc:"Одно видео 10–15 мин + PDF.",ex:["Как сделать (ваш результат) за 20 минут","3 главные ошибки новичков в вашей теме","Быстрый старт: что делать в первые 7 дней"],price:"500–2 000 р.",income:"30 продаж × 1 000 р. = 30 000 р."},
+      {n:"2",name:"Мини-курс (3–5 видео без ОС)",desc:"3–5 видео — пассивный формат.",ex:["3 урока по вашей теме для новичков","5 видео: база и первые шаги","4 урока: от нуля до первого результата"],price:"2 000–5 000 р.",income:"20 участников × 3 000 р. = 60 000 р."},
+      {n:"3",name:"Марафон в записи",desc:"7–10 видео по 10 мин каждое.",ex:["7-дневный марафон по вашей теме","10 дней к системному результату","Видео-марафон: один шаг каждый день"],price:"1 000–3 000 р.",income:"30 участников × 2 000 р. = 60 000 р."}
+    ]},
+    C:{title:"Твой формат — живые практикумы с разбором",sub:"Ты опытный эксперт и готова вести группы с обратной связью.",fmts:[
+      {n:"1",name:"Практикум с ОС",desc:"5–10 дней, проверка заданий.",ex:["5 дней к результату в вашей теме — с разбором","Практикум с проверкой: от теории к практике","7 дней: внедряем систему в твой проект"],price:"3 000–10 000 р.",income:"10 участников × 5 000 р. = 50 000 р."},
+      {n:"2",name:"Интенсив с живыми созвонами",desc:"3–5 встреч Zoom.",ex:["3-дневный интенсив с живыми разборами","Zoom-интенсив: ваша тема + ответы на вопросы","5 встреч к результату: разбор каждого"],price:"5 000–15 000 р.",income:"8 участников × 8 000 р. = 64 000 р."},
+      {n:"3",name:"Разбор кейса",desc:"Видео + PDF с анализом реального случая.",ex:["Как я добился результата в вашей теме — разбор шагов","Кейс: что сработало, а что нет — честно","Мой путь от 0 до результата: детальный разбор"],price:"2 000–6 000 р.",income:"20 продаж × 4 000 р. = 80 000 р."}
+    ]},
+    D:{title:"Твой формат — вебинары и аудио без монтажа",sub:"Ты любишь делиться знаниями в эфирах и через тексты.",fmts:[
+      {n:"1",name:"Вебинар в записи",desc:"1–2 часа с продажей в конце.",ex:["Вебинар по вашей теме: база за 1,5 часа","Как решить проблему клиента за 60 минут","Разбор частых вопросов: вебинар в записи"],price:"500–1 500 р.",income:"40 продаж × 1 000 р. = 40 000 р."},
+      {n:"2",name:"Аудио-курс (без видео)",desc:"5 подкаст-уроков по вашей теме.",ex:["5 аудио-уроков по вашей теме","Подкаст-интенсив: слушаешь и делаешь","Аудиокурс: база знаний в наушниках"],price:"500–1 500 р.",income:"50 продаж × 1 000 р. = 50 000 р."},
+      {n:"3",name:"Закрытый чат + PDF",desc:"Текстовые разборы, без созвонов.",ex:["Клуб по вашей теме: вопросы-ответы месяц","Закрытое сообщество: задания и разборы","Чат-поддержка: ваши вопросы — мои ответы"],price:"2 000–5 000 р.",income:"20 участников × 3 000 р. = 60 000 р."}
+    ]}
+  }
+};
+
+function showResult(){
+  document.getElementById('screen-quiz').classList.remove('active');
+  document.getElementById('screen-result').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  const niche=ans[1],sc=getScenario(),r=R[niche][sc];
+  document.getElementById('res-title').textContent=r.title;
+  document.getElementById('res-sub').textContent=r.sub;
+  const el=document.getElementById('res-formats');
+  el.innerHTML='';
+  r.fmts.forEach(f=>{
+    const d=document.createElement('div');
+    d.className='card fmt';
+    d.innerHTML=`<div class="fmt-top"><div class="fmt-n">${f.n}</div><div class="fmt-name">${f.name}</div></div><div class="fmt-desc">${f.desc}</div><ul class="fmt-ex">${f.ex.map(e=>`<li>${e}</li>`).join('')}</ul><div class="fmt-bot"><span class="fmt-price">Цена: ${f.price}</span><span class="fmt-income">${f.income}</span></div>`;
+    el.appendChild(d);
+  });
+}
+</script>
+</body>
+</html>
