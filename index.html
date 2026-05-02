@@ -145,6 +145,64 @@
 
   .screen { display:none; }
   .screen.active { display:block; animation:fadeUp 0.4s ease both; }
+
+  /* ── LEAD FORM ── */
+  .screen#screen-form { }
+  .form-card {
+    background:var(--card);border:1px solid var(--bdr2);
+    border-radius:var(--rad);padding:32px 24px;
+    position:relative;overflow:hidden;
+    animation:fadeUp 0.5s ease both;
+  }
+  .form-card::before {
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--yellow),#ff8c00,var(--yellow));
+  }
+  .form-tag { font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--yellow);opacity:.75;margin-bottom:12px; }
+  .form-title { font-family:'Russo One',sans-serif;font-size:clamp(17px,4vw,22px);color:var(--white);text-transform:uppercase;line-height:1.25;margin-bottom:8px;letter-spacing:.3px; }
+  .form-sub { font-size:13px;color:var(--grey);line-height:1.65;margin-bottom:24px; }
+  .form-group { display:flex;flex-direction:column;gap:10px;margin-bottom:20px; }
+  .form-input {
+    width:100%;padding:14px 16px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:var(--rad);
+    color:var(--white);font-family:'Montserrat',sans-serif;font-size:14px;
+    outline:none;transition:border-color .2s;
+  }
+  .form-input::placeholder { color:var(--grey);opacity:.6; }
+  .form-input:focus { border-color:rgba(245,166,35,.45); }
+  .form-input.err { border-color:#e05555; }
+  .checkbox-wrap {
+    display:flex;align-items:flex-start;gap:12px;
+    padding:14px 16px;
+    background:rgba(255,255,255,.02);
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:var(--rad);cursor:pointer;
+  }
+  .checkbox-wrap input[type=checkbox] { display:none; }
+  .cb-box {
+    width:18px;height:18px;flex-shrink:0;margin-top:1px;
+    border:1.5px solid rgba(255,255,255,.22);border-radius:3px;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .2s;background:transparent;
+  }
+  .cb-box.checked { background:var(--yellow);border-color:var(--yellow); }
+  .cb-box.checked::after { content:'';width:4px;height:8px;border:2px solid #0d0b0a;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px);display:block; }
+  .cb-text { font-size:12px;color:var(--grey);line-height:1.55; }
+  .cb-text a { color:var(--yellow);text-decoration:underline; }
+  .form-err { font-size:12px;color:#e05555;margin-top:-6px;margin-bottom:4px;display:none; }
+  .form-err.show { display:block; }
+  .form-success {
+    text-align:center;padding:24px;
+    animation:fadeUp .4s ease both;
+  }
+  .form-success-ico { font-size:48px;margin-bottom:12px; }
+  .form-success-t { font-family:'Russo One',sans-serif;font-size:18px;color:var(--yellow);text-transform:uppercase;margin-bottom:8px; }
+  .form-success-d { font-size:13px;color:var(--grey);line-height:1.65; }
+  .skip-link { text-align:center;margin-top:14px; }
+  .skip-btn { background:none;border:none;color:var(--grey);font-family:'Montserrat',sans-serif;font-size:12px;cursor:pointer;text-decoration:underline;opacity:.6; }
+  .skip-btn:hover { opacity:1;color:var(--white); }
   @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
   @media(max-width:480px){
@@ -162,9 +220,9 @@
     <div class="header">
       <div class="handle">@guzellusmanova</div>
       <h1>Какой мини-продукт будет приносить тебе от 100к в месяц?</h1>
-      <p class="header-sub">с примерами, стоимостью и сколько реально с такого мини-продукта получать</p>
+      <p class="header-sub">7 вопросов — и ты получишь конкретные форматы с примерами тем, стоимостью и реальными цифрами дохода</p>
       <div class="stats">
-        <div class="stat"><span class="stat-n">8</span><span class="stat-l">вопросов</span></div>
+        <div class="stat"><span class="stat-n">7</span><span class="stat-l">вопросов</span></div>
         <div class="stat"><span class="stat-n">3 мин</span><span class="stat-l">времени</span></div>
         <div class="stat"><span class="stat-n">11</span><span class="stat-l">ниш</span></div>
       </div>
@@ -197,6 +255,31 @@
     </div>
   </div>
 
+  <!-- LEAD FORM -->
+  <div class="screen" id="screen-form">
+    <div style="padding-top:32px;"></div>
+    <div class="form-card" id="form-card-wrap">
+      <div class="form-tag">Почти готово</div>
+      <div class="form-title">Куда отправить<br>твой результат?</div>
+      <div class="form-sub">Оставь контакты — пришлём результат и расскажем как применить именно в твоей нише.</div>
+      <div class="form-group">
+        <input class="form-input" id="f-name" type="text" placeholder="Имя *" maxlength="60">
+        <input class="form-input" id="f-phone" type="tel" placeholder="Телефон *" maxlength="20">
+        <input class="form-input" id="f-email" type="email" placeholder="Email *" maxlength="80">
+        <input class="form-input" id="f-tg" type="text" placeholder="Telegram (необязательно)" maxlength="60">
+      </div>
+      <div class="form-err" id="form-err">Пожалуйста, заполни все обязательные поля</div>
+      <div class="form-err" id="form-err-cb">Необходимо дать согласие на обработку данных</div>
+      <div class="checkbox-wrap" onclick="toggleCb()" id="cb-wrap">
+        <div class="cb-box" id="cb-box"></div>
+        <div class="cb-text">Я согласна на обработку персональных данных в соответствии с <a href="#" onclick="return false;">политикой конфиденциальности</a></div>
+      </div>
+      <div style="height:18px;"></div>
+      <button class="btn btn-primary" onclick="submitForm()" style="width:100%;margin-top:0;">Получить результат</button>
+      <div class="skip-link"><button class="skip-btn" onclick="skipForm()">Пропустить и посмотреть результат</button></div>
+    </div>
+  </div>
+
   <!-- RESULT -->
   <div class="screen" id="screen-result">
     <div style="height:32px"></div>
@@ -207,7 +290,7 @@
     </div>
     <div class="formats" id="res-formats"></div>
     <div class="card cta">
-      <div class="cta-label">Только для участников теста</div>
+      <div class="cta-label">Практикум</div>
       <div class="cta-title">Практикум <span>«Минимани»</span> — запусти недорогой продукт за 5 дней и получай от 100к пассивного дохода ежемесячно</div>
       <ul class="cta-list">
         <li>Урок 1. «Мини-продукт, как платный тест-драйв» — создашь мини-продукт с нуля, с обратной связью или без. От идеи до готового результата, который можно сразу продавать</li>
@@ -215,21 +298,93 @@
         <li>Урок 3. «План запуска за 5 дней» — сделаешь прогрев по готовой структуре в сторис, закрепишь в актуальное и снимешь рилсы по готовым сценариям</li>
         <li>+ Доп. материал с готовыми инструкциями и схемами — тебе нужно только повторить</li>
       </ul>
-      <div class="spots"><span class="spots-dot"></span>Осталось 15 мест</div>
-      <div class="price-row">
-        <span class="price-new">1 990 р.</span>
-        <span class="price-old">2 990 р.</span>
-        <span class="price-badge">-33%</span>
-      </div>
-      <a href="https://taplink.cc/guzellusmanova/p/1114fef/" target="_blank" class="btn-cta">Хочу на практикум</a>
-     
-    <div class="reset-wrap"><button class="btn-reset" onclick="resetQuiz()">Пройти тест заново</button></div>
+      <a href="https://taplink.cc/guzellusmanova/p/1119711/" target="_blank" class="btn-cta">Хочу на практикум</a>
+    </div>
+    <div class="reset-wrap" style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <a href="https://t.me/guzell_usmanova" target="_blank" style="display:flex;align-items:center;gap:10px;padding:13px 20px;background:#1a1614;border:1px solid rgba(245,166,35,.2);border-radius:8px;font-size:13px;font-weight:700;color:#B0A89E;text-decoration:none;transition:border-color .2s,color .2s;" onmouseover="this.style.borderColor='rgba(245,166,35,.45)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(245,166,35,.2)';this.style.color='#B0A89E'">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z" fill="#F5A623"/></svg>
+        Подписаться на Telegram-канал Гузели
+      </a>
+      <button class="btn-reset" onclick="resetQuiz()">Пройти тест заново</button>
+    </div>
   </div>
 
   <div class="footer">@guzellusmanova · Практикум Минимани</div>
 </div>
 
 <script>
+const BOT_TOKEN='8059900331:AAE7xTzJRbvvMGZQlWNeOw6XXJaDlPkUf7g';
+const CHAT_ID='565012705';
+
+let cbChecked=false;
+let formSkipped=false;
+
+function toggleCb(){
+  cbChecked=!cbChecked;
+  document.getElementById('cb-box').className='cb-box'+(cbChecked?' checked':'');
+}
+
+async function sendToTelegram(name,phone,email,tg,niche,scenario){
+  const nicheNames={beauty:'Бьюти-мастер',fitness:'Фитнес/нутрициолог',psych:'Психолог/коуч',smm:'SMM-специалист',design:'Дизайнер',tutor:'Репетитор',handmade:'Hand-made мастер',health:'Здоровье/массаж',biz:'Предприниматель/коуч',esoteric:'Эзотерик',other:'Другое'};
+  const scNames={A:'Тексты и PDF (без видео)',B:'Видео и мини-курсы',C:'Практикумы с обратной связью',D:'Эфиры и аудио'};
+  const text=`🔥 Новый лид с квиза МИНИМАНИ!\n\n👤 Имя: ${name}\n📱 Телефон: ${phone}\n📧 Email: ${email}\n✈️ Telegram: ${tg||'не указан'}\n\n🎯 Ниша: ${nicheNames[niche]||niche}\n📦 Сценарий: ${scNames[scenario]||scenario}`;
+  try{
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:CHAT_ID,text,parse_mode:'HTML'})
+    });
+  }catch(e){console.error('TG send error',e);}
+}
+
+function showFormScreen(){
+  document.getElementById('screen-quiz').classList.remove('active');
+  document.getElementById('screen-form').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function submitForm(){
+  const name=document.getElementById('f-name').value.trim();
+  const phone=document.getElementById('f-phone').value.trim();
+  const email=document.getElementById('f-email').value.trim();
+  const tg=document.getElementById('f-tg').value.trim();
+  document.getElementById('form-err').classList.remove('show');
+  document.getElementById('form-err-cb').classList.remove('show');
+  if(!name||!phone||!email){
+    document.getElementById('form-err').classList.add('show');
+    return;
+  }
+  if(!cbChecked){
+    document.getElementById('form-err-cb').classList.add('show');
+    return;
+  }
+  const niche=ans[1];
+  const sc=getScenario();
+  sendToTelegram(name,phone,email,tg,niche,sc);
+  // Показать успех
+  document.getElementById('form-card-wrap').innerHTML=`
+    <div class="form-success">
+      <div class="form-success-ico">✅</div>
+      <div class="form-success-t">Отлично!</div>
+      <div class="form-success-d">Данные получены. Смотри свой результат!</div>
+    </div>
+  `;
+  setTimeout(()=>{
+    document.getElementById('screen-form').classList.remove('active');
+    document.getElementById('screen-result').classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    renderResult();
+  },1500);
+}
+
+function skipForm(){
+  formSkipped=true;
+  document.getElementById('screen-form').classList.remove('active');
+  document.getElementById('screen-result').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  renderResult();
+}
+
 const Qs=[
   {id:1,text:"Кто вы по профессии / сфере?",opts:[
     {t:"Бьюти-мастер (маникюр, брови, волосы, визаж, косметолог)",v:"beauty"},
@@ -281,12 +436,7 @@ const Qs=[
     {t:"3 000–7 000 р. (практикум с обратной связью)",v:"3_7k"},
     {t:"7 000–15 000 р. (запись курса)",v:"7_15k"}
   ]},
-  {id:8,text:"Что вы хотите получить от мини-продукта в первую очередь?",opts:[
-    {t:"Быстрые деньги — прямо сейчас",v:"quick_money"},
-    {t:"Лояльных клиентов на подписке / в базе",v:"loyal"},
-    {t:"Заявки на дорогие услуги (личная работа)",v:"leads"},
-    {t:"Узнаваемость и отстройку от конкурентов",v:"brand"}
-  ]}
+
 ];
 
 let ans={},cur=0;
@@ -322,12 +472,13 @@ function render(){
 function nextQ(){
   if(!ans[Qs[cur].id])return;
   if(cur<Qs.length-1){cur++;render();}
-  else showResult();
+  else showFormScreen();
 }
 function prevQ(){if(cur>0){cur--;render();}}
 function resetQuiz(){
-  ans={};cur=0;
+  ans={};cur=0;cbChecked=false;
   document.getElementById('screen-result').classList.remove('active');
+  document.getElementById('screen-form').classList.remove('active');
   document.getElementById('screen-start').classList.add('active');
   window.scrollTo({top:0});
 }
@@ -595,9 +746,9 @@ const R={
 };
 
 function showResult(){
-  document.getElementById('screen-quiz').classList.remove('active');
-  document.getElementById('screen-result').classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
+  showFormScreen();
+}
+function renderResult(){
   const niche=ans[1],sc=getScenario(),r=R[niche][sc];
   document.getElementById('res-title').textContent=r.title;
   document.getElementById('res-sub').textContent=r.sub;
